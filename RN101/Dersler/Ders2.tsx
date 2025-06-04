@@ -1,43 +1,53 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, Button, Alert } from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, StyleSheet, TextInput, Button, Alert, Image} from 'react-native';
+import Loading from "../src/components/shareds/loading";
 
 const Ders2 = () => {
-    const [_name, setName] = useState("");
-    const [_lastName, setLastname] = useState("");
+    const [_email, setEmail] = useState("");
+    const [_password, setPassword] = useState("");
     const [showWelcome, setShowWelcome] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const commitSave = () => {
-        if (_name && _lastName) {
-            setShowWelcome(true);
-            Alert.alert("Bilgi", `${_name} ${_lastName}`);
+        if (_email && _password) {
+            setIsLoading(true);
+            setTimeout(() => {
+                setIsLoading(false); // loading'i kapat
+                setShowWelcome(true); // welcome mesajını göster
+                Alert.alert("Bilgi", `${_email} ${_password}`);
+            }, 1500); // 1.5 saniye sonra işlem bitmiş gibi simüle ediliyor
         } else {
-            setShowWelcome(false);
             Alert.alert("Uyarı", "Alanlar boş");
         }
-    };
+    }
 
     return (
-        <View style={styles.container}>
-            {showWelcome && <Text style={styles.welcomeText}>Welcome {_name} {_lastName}</Text>}
+        <Loading isLoading={isLoading}>
+            <View style={styles.container}>
+                <Image style={styles.images} source={require('../assets/images/login.png')}/>
+                {showWelcome && <Text style={styles.welcomeText}>Welcome {_email} {_password}</Text>}
 
-            <Text>Ad</Text>
-            <TextInput
-                style={styles.textInputStyles}
-                placeholder="Enter Your Name"
-                onChangeText={setName}
-                value={_name}
-            />
-            <Text>Soyad</Text>
-            <TextInput
-                style={styles.textInputStyles}
-                placeholder="Enter Your Surname"
-                onChangeText={setLastname}
-                value={_lastName}
-            />
-            <View>
-                <Button title="Kaydet" onPress={commitSave} color="green" />
+                <Text style={{marginTop: 20}}>Email</Text>
+                <TextInput
+                    style={styles.textInputStyles}
+                    placeholder="Enter Your Email"
+                    inputMode={"email"}
+                    onChangeText={setEmail}
+                    value={_email}
+                />
+                <Text>Password</Text>
+                <TextInput
+                    secureTextEntry={true}
+                    style={styles.textInputStyles}
+                    placeholder="Enter Your Password"
+                    onChangeText={setPassword}
+                    value={_password}
+                />
+                <View>
+                    <Button title="Login" onPress={commitSave} color="green"/>
+                </View>
             </View>
-        </View>
+        </Loading>
     );
 };
 
@@ -60,8 +70,13 @@ const styles = StyleSheet.create({
     welcomeText: {
         fontSize: 20,
         fontWeight: 'bold',
-        marginBottom: 20,
-    }
+        color: 'red',
+        marginTop: 20,
+    },
+    images: {
+        width: 100,
+        height: 100,
+    },
 });
 
 export default Ders2;
