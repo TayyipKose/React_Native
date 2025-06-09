@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {View, Text, StyleSheet, TextInput, Button, Alert, Image} from 'react-native';
 import Loading from "../src/components/shareds/loading";
 
-const Ders2 = () => {
+const LoginPage = ({navigation}) => {
     const [_email, setEmail] = useState("");
     const [_password, setPassword] = useState("");
     const [showWelcome, setShowWelcome] = useState(false);
@@ -43,8 +43,13 @@ const Ders2 = () => {
                     onChangeText={setPassword}
                     value={_password}
                 />
-                <View>
-                    <Button title="Login" onPress={commitSave} color="green"/>
+                <View style={styles.buttonRow}>
+                    <View style={styles.buttonWrapper}>
+                        <Button title="Login" onPress={commitSave} color="green"/>
+                    </View>
+                    <View style={styles.signUpButton}>
+                        <Button title="Sign Up" color="blue" onPress={() => navigation.navigate('SignUp')}/>
+                    </View>
                 </View>
             </View>
         </Loading>
@@ -77,6 +82,9 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
     },
+    signUpButton: {
+        paddingVertical: 20,
+    }
 });
 
-export default Ders2;
+export default LoginPage;
