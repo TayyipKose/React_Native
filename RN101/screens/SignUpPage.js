@@ -47,7 +47,7 @@ const SignUpPage = ({ navigation }) => {
                     <Button title="Kayıt Ol" onPress={() => signUpCommitSave(signUpEmail, signUpPassword)} />
                 </View>
                 <View style={styles.buttonContainer}>
-                    <Button title="Login Ekranı" onPress={() => navigation.navigate('Login_Page')} />
+                    <Button title="Login Ekranı" onPress={() => navigation.navigate('Login_Page')} color="red" />
                 </View>
             </SafeAreaView>
         </Loading>
@@ -57,7 +57,7 @@ const SignUpPage = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f2f2f2', // Açık gri arka plan
+        backgroundColor: '#eaeaea',
         alignItems: 'center',
         justifyContent: 'center',
         padding: 20,

@@ -1,57 +1,73 @@
-import React, {useState} from 'react';
-import {View, Text, StyleSheet, TextInput, Button, Alert, Image} from 'react-native';
-import Loading from "../src/components/shareds/loading";
+import React, { useState } from 'react';
+import {
+    SafeAreaView,
+    View,
+    Text,
+    TextInput,
+    StyleSheet,
+    Button,
+    Alert,
+    Image
+} from 'react-native';
+import Loading from '../src/components/shareds/loading';
 
-const LoginPage = ({navigation}) => {
-    const [_email, setEmail] = useState("");
-    const [_password, setPassword] = useState("");
+const LoginPage = ({ navigation }) => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [showWelcome, setShowWelcome] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    const commitSave = () => {
-        if (_email && _password) {
+    /**
+     * Kullanıcı giriş bilgilerini kontrol eder.
+     * Eğer tüm alanlar doluysa loading gösterir, 1.5 saniye sonra welcome mesajı verir.
+     * Email ve şifre boşsa uyarı mesajı verir.
+     */
+    const commitLogin = () => {
+        if (email && password) {
             setIsLoading(true);
             setTimeout(() => {
-                setIsLoading(false); // loading'i kapat
-                setShowWelcome(true); // welcome mesajını göster
-                Alert.alert("Bilgi", `${_email} ${_password}`);
-            }, 1500); // 1.5 saniye sonra işlem bitmiş gibi simüle ediliyor
+                setIsLoading(false);
+                setShowWelcome(true);
+                Alert.alert('Giriş Başarılı', `${email} ile giriş yapıldı.`);
+            }, 1500);
         } else {
-            Alert.alert("Uyarı", "Alanlar boş");
+            Alert.alert('Uyarı', 'Lütfen tüm alanları doldurun.');
         }
-    }
+    };
 
     return (
         <Loading isLoading={isLoading}>
-            <View style={styles.container}>
-                <Image style={styles.images} source={require('../assets/images/login.png')}/>
-                {showWelcome && <Text style={styles.welcomeText}>Welcome {_email} {_password}</Text>}
+            <SafeAreaView style={styles.container}>
+                <Image style={styles.logo} source={require('../assets/images/login.png')} />
 
-                <Text style={{marginTop: 20}}>Email</Text>
+                {/* Hoş geldiniz mesajı */}
+                {showWelcome && <Text style={styles.welcomeText}>Hoş geldin, {email}!</Text>}
+
+                {/* Email input alanı */}
                 <TextInput
-                    style={styles.textInputStyles}
-                    placeholder="Enter Your Email"
-                    inputMode={"email"}
+                    style={styles.input}
+                    placeholder="Email adresiniz"
+                    inputMode="email"
                     onChangeText={setEmail}
-                    value={_email}
+                    value={email}
                 />
-                <Text>Password</Text>
+                {/* Password input alanı */}
                 <TextInput
-                    secureTextEntry={true}
-                    style={styles.textInputStyles}
-                    placeholder="Enter Your Password"
+                    style={styles.input}
+                    placeholder="Şifreniz"
+                    secureTextEntry
                     onChangeText={setPassword}
-                    value={_password}
+                    value={password}
                 />
-                <View style={styles.buttonRow}>
-                    <View style={styles.buttonWrapper}>
-                        <Button title="Login" onPress={commitSave} color="green"/>
-                    </View>
-                    <View style={styles.signUpButton}>
-                        <Button title="Sign Up" color="blue" onPress={() => navigation.navigate('SignUp')}/>
-                    </View>
+
+                {/* Giriş yap ve kayıt ol butonları */}
+                <View style={styles.buttonContainer}>
+                    <Button title="Giriş Yap" onPress={commitLogin} color="#28a745" />
                 </View>
-            </View>
+                <View style={styles.buttonContainer}>
+                    <Button title="Kayıt Ol" onPress={() => navigation.navigate('SignUp')} color="#007bff" />
+                </View>
+            </SafeAreaView>
         </Loading>
     );
 };
@@ -59,32 +75,46 @@ const LoginPage = ({navigation}) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
+        backgroundColor: '#f2f2f2',
         alignItems: 'center',
-        backgroundColor: 'whitesmoke'
+        justifyContent: 'center',
+        padding: 20,
     },
-    textInputStyles: {
-        borderWidth: 2,
-        width: '80%',
-        height: 50,
-        borderRadius: 30,
-        marginVertical: 10,
-        textAlign: 'center',
-        fontWeight: "bold",
+    logo: {
+        width: 120,
+        height: 120,
+        marginBottom: 30,
     },
     welcomeText: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: 'red',
-        marginTop: 20,
+        color: 'green',
+        marginBottom: 20,
     },
-    images: {
-        width: 100,
-        height: 100,
+    input: {
+        width: '90%',
+        padding: 12,
+        marginBottom: 15,
+        backgroundColor: '#fff',
+        borderRadius: 6,
+        borderColor: '#ccc',
+        borderWidth: 1,
     },
-    signUpButton: {
-        paddingVertical: 20,
-    }
+    buttonContainer: {
+        width: '90%',
+        marginVertical: 5,
+    },
 });
 
 export default LoginPage;
+
+/**
+ * Notlarım:
+ * - `useState`: React'in hook'udur. Bileşen içinde dinamik veriler (email, şifre, loading durumu vb.) tutmak için kullanılır.
+ * - `SafeAreaView`: iPhone gibi çentikli cihazlarda içeriklerin çentiğe girmemesini sağlar. Tüm sayfayı kapsayan güvenli alan.
+ * - `TextInput`: Kullanıcının metin girişi yapmasını sağlar. Email ve şifre girişi gibi yerlerde kullanılır.
+ * - `Button`: Kullanıcının etkileşime geçmesini sağlar. Giriş yap, kayıt ol gibi eylemleri tetikler.
+ * - `Alert`: Mobilde sistem popup mesajları göstermek için kullanılır.
+ * - `Image`: Görsel veya logo eklemek için kullanılır.
+ * - `StyleSheet`: CSS benzeri yapı sağlar. Görsel düzenleme işlevlerini tanımlar.
+ */
