@@ -3,13 +3,14 @@ import {
     SafeAreaView,
     View,
     Text,
-    TextInput,
     StyleSheet,
     Button,
     Alert,
     Image
 } from 'react-native';
 import Loading from '../src/components/shareds/loading';
+import InputWithLabel from '../src/components/shareds/InputWithLabel';
+import CustomButton from '../src/components/shareds/CustomButton';
 
 const LoginPage = ({ navigation }) => {
     const [email, setEmail] = useState('');
@@ -17,11 +18,6 @@ const LoginPage = ({ navigation }) => {
     const [showWelcome, setShowWelcome] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
-    /**
-     * Kullanıcı giriş bilgilerini kontrol eder.
-     * Eğer tüm alanlar doluysa loading gösterir, 1.5 saniye sonra welcome mesajı verir.
-     * Email ve şifre boşsa uyarı mesajı verir.
-     */
     const commitLogin = () => {
         if (email && password) {
             setIsLoading(true);
@@ -40,32 +36,40 @@ const LoginPage = ({ navigation }) => {
             <SafeAreaView style={styles.container}>
                 <Image style={styles.logo} source={require('../assets/images/login.png')} />
 
-                {/* Hoş geldiniz mesajı */}
                 {showWelcome && <Text style={styles.welcomeText}>Hoş geldin, {email}!</Text>}
 
-                {/* Email input alanı */}
-                <TextInput
-                    style={styles.input}
+                {/* Burada InputWithLabel kullanıyoruz */}
+                <InputWithLabel
+                    label="Email"
+                    value={email}
+                    onChangeText={setEmail}
                     placeholder="Email adresiniz"
                     inputMode="email"
-                    onChangeText={setEmail}
-                    value={email}
-                />
-                {/* Password input alanı */}
-                <TextInput
-                    style={styles.input}
-                    placeholder="Şifreniz"
-                    secureTextEntry
-                    onChangeText={setPassword}
-                    value={password}
+                    align="center"
                 />
 
-                {/* Giriş yap ve kayıt ol butonları */}
+                <InputWithLabel
+                    label="Şifre"
+                    value={password}
+                    onChangeText={setPassword}
+                    placeholder="Şifreniz"
+                    secureTextEntry={true}
+                    align="center"
+                />
+
                 <View style={styles.buttonContainer}>
-                    <Button title="Giriş Yap" onPress={commitLogin} color="#28a745" />
+                    <CustomButton
+                        title="Giriş Yap"
+                        onPress={commitLogin}
+                        backgroundColor="#28a745"
+                    />
                 </View>
                 <View style={styles.buttonContainer}>
-                    <Button title="Kayıt Ol" onPress={() => navigation.navigate('SignUp')} color="#007bff" />
+                    <CustomButton
+                        title="Kayıt Ol"
+                        onPress={() => navigation.navigate('SignUp')}
+                        backgroundColor="#007bff"
+                    />
                 </View>
             </SafeAreaView>
         </Loading>
@@ -91,15 +95,6 @@ const styles = StyleSheet.create({
         color: 'green',
         marginBottom: 20,
     },
-    input: {
-        width: '90%',
-        padding: 12,
-        marginBottom: 15,
-        backgroundColor: '#fff',
-        borderRadius: 6,
-        borderColor: '#ccc',
-        borderWidth: 1,
-    },
     buttonContainer: {
         width: '90%',
         marginVertical: 5,
@@ -107,6 +102,7 @@ const styles = StyleSheet.create({
 });
 
 export default LoginPage;
+
 
 /**
  * Notlarım:

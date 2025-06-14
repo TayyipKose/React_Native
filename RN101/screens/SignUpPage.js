@@ -3,11 +3,11 @@ import {
     SafeAreaView,
     View,
     Text,
-    TextInput,
     StyleSheet,
     Button,
 } from 'react-native';
 import Loading from '../src/components/shareds/loading';
+import InputWithLabel from '../src/components/shareds/InputWithLabel';
 
 const SignUpPage = ({ navigation }) => {
     const [signUpEmail, setSignUpemail] = useState('');
@@ -27,20 +27,24 @@ const SignUpPage = ({ navigation }) => {
             <SafeAreaView style={styles.container}>
                 <Text style={styles.title}>Kayıt Ol</Text>
 
-                <TextInput
-                    style={styles.input}
+                {/* Email için shared input */}
+                <InputWithLabel
+                    label="Email"
+                    value={signUpEmail}
+                    onChangeText={setSignUpemail}
                     placeholder="Email adresiniz"
                     inputMode="email"
-                    onChangeText={setSignUpemail}
-                    value={signUpEmail}
+                    align="left"
                 />
 
-                <TextInput
-                    style={styles.input}
-                    placeholder="Şifre"
-                    secureTextEntry
-                    onChangeText={setSignUpPassword}
+                {/* Şifre için shared input */}
+                <InputWithLabel
+                    label="Şifre"
                     value={signUpPassword}
+                    onChangeText={setSignUpPassword}
+                    placeholder="Şifreniz"
+                    secureTextEntry={true}
+                    align="left"
                 />
 
                 <View style={styles.buttonContainer}>
@@ -67,15 +71,6 @@ const styles = StyleSheet.create({
         marginBottom: 30,
         fontWeight: 'bold',
         color: '#333',
-    },
-    input: {
-        width: '90%',
-        padding: 12,
-        marginBottom: 15,
-        backgroundColor: '#fff',
-        borderRadius: 6,
-        borderColor: '#ccc',
-        borderWidth: 1,
     },
     buttonContainer: {
         width: '90%',
