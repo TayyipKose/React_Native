@@ -1,35 +1,61 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     SafeAreaView,
     View,
     Text,
     StyleSheet,
-    Button,
     Alert,
     Image
 } from 'react-native';
 import Loading from '../src/components/shareds/loading';
 import InputWithLabel from '../src/components/shareds/InputWithLabel';
 import CustomButton from '../src/components/shareds/CustomButton';
+import { useSelector, useDispatch } from 'react-redux';
+import { setEmail, setPassword, setIsLoading, setLogin } from '../src/redux/userSlice';
 
 const LoginPage = ({ navigation }) => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [showWelcome, setShowWelcome] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
+    /** 
+     * Redux'tan user state'ini alıyoruz
+     * email, password, isLoading ve isAuth değerlerini kullanacağız
+     */
+    const { email, password, isLoading, isAuth } = useSelector(state => state.user);
+    const dispatch = useDispatch();
 
+    /** 
+     * Hoş geldin mesajını göstermek için local state
+     */
+    const [showWelcome, setShowWelcome] = useState(false);
+
+    /**
+     * Kullanıcı giriş yapmaya çalıştığında çağrılır.
+     * Email veya şifre boşsa uyarı verir.
+     * Redux'a dispatch ile loading durumu ve login kontrolü gönderilir.
+     */
     const commitLogin = () => {
-        if (email && password) {
-            setIsLoading(true);
-            setTimeout(() => {
-                setIsLoading(false);
-                setShowWelcome(true);
-                Alert.alert('Giriş Başarılı', `${email} ile giriş yapıldı.`);
-            }, 1500);
-        } else {
+        if (!email || !password) {
             Alert.alert('Uyarı', 'Lütfen tüm alanları doldurun.');
+            return;
         }
+
+        dispatch(setIsLoading(true));
+        dispatch(setLogin()); // isAuth burada güncellenir
+        dispatch(setIsLoading(false));
     };
+
+    /**
+     * isAuth değiştiğinde burası tetiklenir.
+     * isAuth true ise hoş geldin mesajı gösterilir.
+     * Yanlış giriş yapılmışsa uyarı verir.
+     * Konsola isAuth durumunu basar.
+     */
+    useEffect(() => {
+        if (isAuth) {
+            setShowWelcome(true);
+            console.log('Giriş başarılı, artık user router render edilecek.');
+        } else if (email && password) {
+            Alert.alert('Hata', 'Email veya şifre yanlış.');
+        }
+    }, [isAuth]);
 
     return (
         <Loading isLoading={isLoading}>
@@ -38,11 +64,10 @@ const LoginPage = ({ navigation }) => {
 
                 {showWelcome && <Text style={styles.welcomeText}>Hoş geldin, {email}!</Text>}
 
-                {/* Burada InputWithLabel kullanıyoruz */}
                 <InputWithLabel
                     label="Email"
                     value={email}
-                    onChangeText={setEmail}
+                    onChangeText={(text) => dispatch(setEmail(text))}
                     placeholder="Email adresiniz"
                     inputMode="email"
                     align="center"
@@ -51,7 +76,7 @@ const LoginPage = ({ navigation }) => {
                 <InputWithLabel
                     label="Şifre"
                     value={password}
-                    onChangeText={setPassword}
+                    onChangeText={(text) => dispatch(setPassword(text))}
                     placeholder="Şifreniz"
                     secureTextEntry={true}
                     align="center"
@@ -105,12 +130,15 @@ export default LoginPage;
 
 
 /**
- * Notlarım:
- * - `useState`: React'in hook'udur. Bileşen içinde dinamik veriler (email, şifre, loading durumu vb.) tutmak için kullanılır.
- * - `SafeAreaView`: iPhone gibi çentikli cihazlarda içeriklerin çentiğe girmemesini sağlar. Tüm sayfayı kapsayan güvenli alan.
- * - `TextInput`: Kullanıcının metin girişi yapmasını sağlar. Email ve şifre girişi gibi yerlerde kullanılır.
- * - `Button`: Kullanıcının etkileşime geçmesini sağlar. Giriş yap, kayıt ol gibi eylemleri tetikler.
- * - `Alert`: Mobilde sistem popup mesajları göstermek için kullanılır.
- * - `Image`: Görsel veya logo eklemek için kullanılır.
- * - `StyleSheet`: CSS benzeri yapı sağlar. Görsel düzenleme işlevlerini tanımlar.
+React hook'ları:
+useState: Bileşen içinde değişen, yerel durumu tutar (örn: showWelcome mesajını göstermek için).
+useSelector: Redux store’dan istediğin state verisini alır (örn: email, password, isLoading).
+useDispatch: Redux store’a eylem (action) göndermek için kullanılır.
+
+Redux:
+store: Tüm uygulamanın merkezi veri deposu.
+slice (userSlice): Store içinde bir parçayı yönetir (örn: kullanıcı bilgileri).
+action (setEmail, setPassword, setIsLoading): State’i değiştirmek için çağrılan fonksiyonlar.
+dispatch: Action’ları store’a ileten fonksiyon.
+useSelector ile store’dan veri okunur, dispatch ile store’daki veriler güncellenir.
  */
